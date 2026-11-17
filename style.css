@@ -1,0 +1,408 @@
+* {
+    box-sizing: border-box;
+    user-select: none;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #050814;
+    color: #ffffff;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#game-wrapper {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* Full-screen borderless canvas */
+canvas#gameCanvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    image-rendering: pixelated;
+}
+
+/* Floating Top HUD Bar */
+#hud {
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(92vw, 820px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(8, 14, 36, 0.85);
+    border: 2px solid #2b6cb0;
+    border-radius: 10px;
+    padding: 10px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffcc00;
+    box-shadow: 0 0 20px rgba(43, 108, 176, 0.5);
+    z-index: 5;
+}
+
+#hud span {
+    color: #ffffff;
+}
+
+.hud-hint {
+    font-size: 13px;
+    color: #90cdf4;
+}
+
+/* Full-Screen Overlay Menus */
+.overlay-screen {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 8, 22, 0.86);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    text-align: center;
+    z-index: 10;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Welcome Screen */
+.title-badge {
+    background: #ff4757;
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.game-title {
+    font-size: clamp(40px, 6vw, 64px);
+    color: #ffcc00;
+    margin: 0;
+    text-shadow: 4px 4px 0px #000000, 0 0 25px rgba(255, 204, 0, 0.5);
+    letter-spacing: 4px;
+}
+
+.game-subtitle {
+    font-size: clamp(18px, 2.5vw, 24px);
+    color: #63b3ed;
+    margin: 6px 0 32px 0;
+    letter-spacing: 8px;
+    font-weight: bold;
+}
+
+/* Buttons */
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 280px;
+}
+
+.arcade-btn {
+    background: #101b3d;
+    color: #ffffff;
+    border: 3px solid #ffcc00;
+    border-radius: 8px;
+    padding: 14px 22px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+    box-shadow: 0 4px 0 #b38f00;
+}
+
+.arcade-btn:hover {
+    background: #1c2e63;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #b38f00;
+}
+
+.arcade-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #b38f00;
+}
+
+.arcade-btn.primary {
+    background: #ffcc00;
+    color: #111111;
+    border-color: #ffffff;
+}
+
+.arcade-btn.primary:hover {
+    background: #ffe066;
+}
+
+.back-btn {
+    margin-top: 24px;
+    width: 240px;
+    font-size: 15px;
+}
+
+/* Character Selection Screen */
+.overlay-screen h2 {
+    color: #ffcc00;
+    font-size: 32px;
+    margin: 0 0 6px 0;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.sub-instruction {
+    color: #cbd5e0;
+    font-size: 15px;
+    margin-bottom: 20px;
+}
+
+.char-grid {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.char-card {
+    background: #0d152e;
+    border: 3px solid #2c427a;
+    border-radius: 12px;
+    padding: 18px;
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.char-card:hover {
+    border-color: #ffa801;
+    transform: translateY(-3px);
+}
+
+.char-card.selected {
+    border-color: #ffcc00;
+    background: #16244d;
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.45);
+}
+
+.preview-cnv {
+    background: #070b19;
+    border-radius: 8px;
+    border: 2px solid #2b4175;
+    margin-bottom: 10px;
+}
+
+.char-card h3 {
+    margin: 4px 0;
+    font-size: 18px;
+    color: #fff;
+}
+
+.role-tag {
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 10px;
+    margin: 4px 0 8px 0;
+}
+
+.role-tag.player {
+    background: #e17055;
+    color: #fff;
+}
+
+.role-tag.white-dog {
+    background: #74b9ff;
+    color: #111;
+}
+
+.char-desc {
+    font-size: 13px;
+    color: #cbd5e0;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+}
+
+.select-status {
+    font-size: 13px;
+    color: #2ed573;
+    font-weight: bold;
+}
+
+/* Tutorials Screen */
+.tutorial-box {
+    background: #0d152e;
+    border: 2px solid #ffcc00;
+    border-radius: 12px;
+    padding: 20px 28px;
+    width: min(90vw, 560px);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    text-align: left;
+}
+
+.tut-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 15px;
+    color: #f7fafc;
+}
+
+.key-badge {
+    background: #ffcc00;
+    color: #111111;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.icon-badge {
+    font-size: 20px;
+    min-width: 45px;
+    text-align: center;
+}
+
+#end-stats {
+    font-size: 20px;
+    color: #ffffff;
+    margin-bottom: 24px;
+}
+
+/* ===== Touch / mobile support ===== */
+canvas#gameCanvas {
+    touch-action: none; /* swipes control the dog, not page scroll */
+}
+
+.hud-hint {
+    cursor: pointer;
+}
+
+/* Virtual joystick (touch devices) */
+#joystick {
+    position: fixed;
+    bottom: max(18px, env(safe-area-inset-bottom));
+    left: max(24px, env(safe-area-inset-left));
+    width: 132px;
+    height: 132px;
+    z-index: 6;
+    touch-action: none;
+}
+
+#joy-base {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(16, 27, 61, 0.6);
+    border: 3px solid rgba(255, 204, 0, 0.85);
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#joy-knob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 56px;
+    height: 56px;
+    margin: -28px 0 0 -28px;
+    border-radius: 50%;
+    background: #ffcc00;
+    box-shadow: 0 0 12px rgba(255, 204, 0, 0.7);
+    pointer-events: none;
+}
+
+/* "Rotate your device" prompt */
+#rotate-screen {
+    z-index: 30;
+    background: rgba(5, 8, 22, 0.97);
+}
+
+.rotate-icon {
+    font-size: 72px;
+    margin-bottom: 12px;
+    animation: rotate-hint 2s ease-in-out infinite;
+}
+
+@keyframes rotate-hint {
+    0%, 30% { transform: rotate(0deg); }
+    70%, 100% { transform: rotate(-90deg); }
+}
+
+/* Small screens */
+@media (max-width: 600px) {
+    #hud {
+        top: 8px;
+        padding: 8px 12px;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+    .hud-hint {
+        font-size: 11px;
+    }
+    .overlay-screen {
+        overflow-y: auto;
+        justify-content: flex-start;
+        padding-top: 36px;
+    }
+    .menu-buttons {
+        width: min(280px, 86vw);
+    }
+    .overlay-screen h2 {
+        font-size: 24px;
+    }
+    .char-grid {
+        gap: 14px;
+    }
+    .char-card {
+        width: min(240px, 80vw);
+        padding: 12px;
+    }
+    .tut-row {
+        font-size: 13px;
+        flex-wrap: wrap;
+    }
+    .back-btn {
+        margin-bottom: 24px;
+    }
+}
+/* ===== Extra dogs: Archer & Yoda ===== */
+.role-tag.archer {
+    background: #f6b93b;
+    color: #111;
+}
+
+.role-tag.yoda {
+    background: #78e08f;
+    color: #111;
+}
+
+/* four character cards: slightly narrower so they fit, and the screen can scroll */
+.char-grid {
+    max-width: 1000px;
+}
+
+.char-card {
+    width: 200px;
+}
+
+.overlay-screen {
+    overflow-y: auto;
+}

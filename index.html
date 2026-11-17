@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAW-MAN: Berry Chase</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="game-wrapper">
+        <!-- Floating HUD Bar (Visible during gameplay) -->
+        <div id="hud" class="hidden">
+            <div class="hud-item">LIVES: <span id="hud-lives">❤️❤️❤️</span></div>
+            <div class="hud-item">SCORE: <span id="hud-score">0</span></div>
+            <div class="hud-item">ITEMS: <span id="hud-berries">0/0</span></div>
+            <div class="hud-hint">[ESC] MENU</div>
+        </div>
+
+        <!-- Full-Screen Game Canvas -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Virtual joystick (touch devices only) -->
+        <div id="joystick" class="hidden">
+            <div id="joy-base"><div id="joy-knob"></div></div>
+        </div>
+
+        <!-- "Rotate your device" prompt (phones/tablets held upright) -->
+        <div id="rotate-screen" class="overlay-screen hidden">
+            <div class="rotate-icon">📱</div>
+            <h2>ROTATE YOUR DEVICE</h2>
+            <p class="sub-instruction">Paw-Man plays best in landscape mode.</p>
+        </div>
+
+        <!-- WELCOME SCREEN OVERLAY -->
+        <div id="welcome-screen" class="overlay-screen">
+            <div class="title-badge">ARCADE EDITION</div>
+            <h1 class="game-title"> PAW-MAN </h1>
+            <p class="game-subtitle">BERRY CHASE</p>
+
+            <div class="menu-buttons">
+                <button id="btn-start" class="arcade-btn primary">▶ START GAME</button>
+                <button id="btn-characters" class="arcade-btn">CHOOSE DOG</button>
+                <button id="btn-tutorials" class="arcade-btn">TUTORIALS</button>
+            </div>
+        </div>
+
+        <!-- CHARACTER SELECTION SCREEN OVERLAY -->
+        <div id="characters-screen" class="overlay-screen hidden">
+            <h2>SELECT YOUR DOGGY</h2>
+            <p class="sub-instruction">Click a card to choose your hero!</p>
+
+            <div class="char-grid">
+                <div class="char-card selected" id="card-molly" data-dog="molly">
+                    <canvas class="preview-cnv" id="previewMolly" width="80" height="80"></canvas>
+                    <h3>MOLLY</h3>
+                    <p class="role-tag player">BROWN DOG</p>
+                    <p class="char-desc">Fluffy Shih Tzu with classic brown patches. Super quick!</p>
+                    <span class="select-status" id="status-molly">✓ SELECTED</span>
+                </div>
+
+                <div class="char-card" id="card-buddy" data-dog="buddy">
+                    <canvas class="preview-cnv" id="previewBuddy" width="80" height="80"></canvas>
+                    <h3>BUDDY</h3>
+                    <p class="role-tag white-dog">WHITE DOG</p>
+                    <p class="char-desc">Bright snowy white coat. Master of stealth berry picking!</p>
+                    <span class="select-status hidden" id="status-buddy">✓ SELECTED</span>
+                </div>
+
+                <div class="char-card" id="card-archer" data-dog="archer">
+                    <canvas class="preview-cnv" id="previewArcher" width="80" height="80"></canvas>
+                    <h3>ARCHER</h3>
+                    <p class="role-tag archer">SHARPSHOOTER</p>
+                    <p class="char-desc">Sharp eyes and a sharper nose. Never misses a berry!</p>
+                    <span class="select-status hidden" id="status-archer">✓ SELECTED</span>
+                </div>
+
+                <div class="char-card" id="card-yoda" data-dog="yoda">
+                    <canvas class="preview-cnv" id="previewYoda" width="80" height="80"></canvas>
+                    <h3>YODA</h3>
+                    <p class="role-tag yoda">WISE ONE</p>
+                    <p class="char-desc">Small but wise. Berries, the Force guides him to!</p>
+                    <span class="select-status hidden" id="status-yoda">✓ SELECTED</span>
+                </div>
+            </div>
+
+            <button id="btn-back-char" class="arcade-btn back-btn">← BACK TO MENU</button>
+        </div>
+
+        <!-- TUTORIALS SCREEN OVERLAY -->
+        <div id="tutorials-screen" class="overlay-screen hidden">
+            <h2>📖 HOW TO PLAY</h2>
+            <div class="tutorial-box">
+                <div class="tut-row">
+                    <span class="key-badge">W A S D</span> or <span class="key-badge">ARROWS</span>
+                    <span>Move your dog through the maze. Phone/tablet: use the joystick or swipe!</span>
+                </div>
+                <div class="tut-row">
+                    <span class="icon-badge">✨</span>
+                    <span>Eat <strong>Mini Dots</strong> for <strong>+25 PTS</strong> each</span>
+                </div>
+                <div class="tut-row">
+                    <span class="icon-badge">🍒</span>
+                    <span>Grab <strong>Cherries</strong> for <strong>+200 PTS</strong> bonus!</span>
+                </div>
+                <div class="tut-row">
+                    <span class="icon-badge">⚪</span>
+                    <span>Eat a <strong>Big Dot</strong> to turn the tables: Pac-Man runs away and your dog can hit him! He's knocked out for <strong>10s</strong> (+500 PTS)</span>
+                </div>
+                <div class="tut-row">
+                    <span class="icon-badge">🟡</span>
+                    <span>Dodge the <strong>Pac-Man</strong>! Getting caught costs 1 life</span>
+                </div>
+                <div class="tut-row">
+                    <span class="key-badge">ESC</span>
+                    <span>Pause / Return to Main Menu</span>
+                </div>
+            </div>
+            <button id="btn-back-tut" class="arcade-btn back-btn">← BACK TO MENU</button>
+        </div>
+
+        <!-- GAME OVER / WIN OVERLAY -->
+        <div id="end-screen" class="overlay-screen hidden">
+            <h2 id="end-title">GAME OVER</h2>
+            <p id="end-stats">FINAL SCORE: 0</p>
+            <div class="menu-buttons">
+                <button id="btn-restart" class="arcade-btn primary">↻ PLAY AGAIN</button>
+                <button id="btn-home" class="arcade-btn">MAIN MENU</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
